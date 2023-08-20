@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, UploadFile, File
+from fastapi.responses import FileResponse
+
 from sqlalchemy.orm import Session
 from . import room_crud, room_schema
 from database import get_db
 from typing import List, Dict
 
-from fastapi import FastAPI, WebSocket
 from starlette.responses import FileResponse
 import os
 
@@ -49,3 +50,29 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
         # For demonstration purposes, we'll just print the length of the received audio data.
         # In a real-world scenario, you might process this data further.
         print(f"Received audio data of length {len(audio_data)} bytes for room: {room_id}")
+
+AUDIO_PATH = "audio_files"
+# Ensure the directory exists
+if not os.path.exists(AUDIO_PATH):
+    os.makedirs(AUDIO_PATH)
+
+@router.post("/upload/")
+async def upload_audio(file: UploadFile = File(...)):
+    try:
+        # Save the uploaded file
+        file_location = os.path.join(AUDIO_PATH, file.filename)
+        with open(file_location, "wb+") as f:
+            f.write(file.file.read())
+        
+        return {"status": "success", "filename": file.filename}
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error saving audio: {e}")
+
+@router.get("/download/{filename}/")
+async def download_audio(filename: str):
+    file_location = os.path.join(AUDIO_PATH, filename)
+    if not os.path.isfile(file_location):
+        raise HTTPException(status_code=404, detail=f"File {filename} not found")
+
+    return FileResponse(file_location, headers={"Content-Disposition": f"attachment; filename={filename}"})
