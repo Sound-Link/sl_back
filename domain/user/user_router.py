@@ -3,8 +3,8 @@ import requests
 
 router = APIRouter()
 
-KAKAO_CLIENT_ID = "YOUR_KAKAO_CLIENT_ID"
-REDIRECT_URI = "http://your_domain.com/login/callback"
+KAKAO_CLIENT_ID = "8d14be00636c3c6f065f37e3ea715cb4"
+REDIRECT_URI = "http://127.0.0.1:8000/login/callback"
 
 @router.get("/login")
 def login():
