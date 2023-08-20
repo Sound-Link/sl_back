@@ -51,6 +51,23 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
         # In a real-world scenario, you might process this data further.
         print(f"Received audio data of length {len(audio_data)} bytes for room: {room_id}")
 
+# Define the path to save the text file
+file_path = "received_text.txt"
+
+@router.websocket("/ws/text/")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    print(f"Accepted connection")
+
+    while True:
+        text_data = await websocket.receive_text()
+
+        # Writing the received text data to a file
+        with open(file_path, 'a') as file:  # 'a' mode appends data to the file
+            file.write(text_data + "\n")  # Appending a newline for clarity
+
+        print(f"Saved received text")
+
 AUDIO_PATH = "audio_files"
 # Ensure the directory exists
 if not os.path.exists(AUDIO_PATH):
