@@ -26,7 +26,7 @@ def read_rooms(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
 
 @router.post("/rooms/", response_model=room_schema.RoomInDB)
 def create_room(room: room_schema.RoomCreate, db: Session = Depends(get_db)):
-    return room_crud.create_room(db=db, room=room)
+    return room_crud.create_room(db=db, room=room, user_id=room.user_id)
 
 @router.put("/rooms/{room_id}", response_model=room_schema.RoomInDB)
 def update_room(room_id: int, room: room_schema.RoomUpdate, db: Session = Depends(get_db)):
