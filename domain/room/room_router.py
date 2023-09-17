@@ -7,6 +7,7 @@ from database import get_db
 from typing import List, Dict
 
 from speech_recognition import Recognizer, AudioData
+import speech_recognition as sr
 from starlette.responses import FileResponse
 import os
 
@@ -85,18 +86,26 @@ AUDIO_PATH = "audio_files"
 if not os.path.exists(AUDIO_PATH):
     os.makedirs(AUDIO_PATH)
 
-@router.post("/upload/")
+@app.post("/upload/")
 async def upload_audio(file: UploadFile = File(...)):
     try:
-        # Save the uploaded file
-        file_location = os.path.join(AUDIO_PATH, file.filename)
-        with open(file_location, "wb+") as f:
-            f.write(file.file.read())
+        # Read the audio file directly
+        audio_bytes = file.file.read()
         
-        return {"status": "success", "filename": file.filename}
+        # Recognize the audio data
+        recognizer = sr.Recognizer()
+        with sr.AudioFile(io.BytesIO(audio_bytes)) as source:
+            audio_data = recognizer.record(source)
+            text = recognizer.recognize_google(audio_data, language='ko-KR')
+        
+        return {"status": "success", "text": text}
 
+    except sr.UnknownValueError:
+        raise HTTPException(status_code=400, detail="Google Web Speech API could not understand the audio.")
+    except sr.RequestError:
+        raise HTTPException(status_code=400, detail="Could not request results from Google Web Speech API.")
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error saving audio: {e}")
+        raise HTTPException(status_code=400, detail=f"Error processing audio: {e}")
 
 @router.get("/download/{filename}/")
 async def download_audio(filename: str):
