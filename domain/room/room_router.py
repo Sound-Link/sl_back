@@ -86,7 +86,7 @@ AUDIO_PATH = "audio_files"
 if not os.path.exists(AUDIO_PATH):
     os.makedirs(AUDIO_PATH)
 
-@app.post("/upload/")
+@router.post("/upload/")
 async def upload_audio(file: UploadFile = File(...)):
     try:
         # Read the audio file directly
