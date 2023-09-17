@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, UploadFile, File
 from fastapi.responses import FileResponse
+import io
 
 from sqlalchemy.orm import Session
 from . import room_crud, room_schema
