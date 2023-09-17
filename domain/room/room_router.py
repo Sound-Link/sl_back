@@ -41,10 +41,9 @@ r = Recognizer()
 # Dictionary to manage audio data for each room
 rooms_audio_data: Dict[str, bytes] = {}
 
-@router.websocket("/ws/voice/{room_id}")
-async def websocket_endpoint(websocket: WebSocket, room_id: str):
+@router.websocket("/ws/voice/")
+async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    print(f"Accepted connection for room: {room_id}")
 
     while True:
         audio_data = await websocket.receive_bytes()
@@ -63,8 +62,6 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
         except Exception as e:
             print(f"Error recognizing audio: {e}")
             await websocket.send_text("Error recognizing audio.")
-
-        print(f"Received audio data of length {len(audio_data)} bytes for room: {room_id}")
 
 # Define the path to save the text file
 file_path = "received_text.txt"
