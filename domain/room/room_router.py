@@ -101,7 +101,7 @@ async def upload_audio(file: UploadFile = None):
         return {"status": "success", "text": text}
 
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=f"{type(e).__name__}: {str(e)}")
 
 def recognize_audio(audio_bytes: bytes) -> str:
     recognizer = sr.Recognizer()
