@@ -15,8 +15,8 @@ import os
 router = APIRouter()
 
 @router.post("/rooms/create/")
-def create_room_by_email(email: str, name: str, db: Session = Depends(get_db)):
-    room = room_crud.create_room_by_user_and_email(db, email=email, name=name)
+def create_room_by_email(room =  room_schema.RoomCreate,db: Session = Depends(get_db)):
+    room = room_crud.create_room_by_user_and_email(db, email=room.email, name=room.name)
     return room
 
 # @router.put("/rooms/{room_id}", response_model=room_schema.RoomInDB)

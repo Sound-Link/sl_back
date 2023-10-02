@@ -5,7 +5,7 @@ class RoomBase(BaseModel):
     name: str
 
 class RoomCreate(RoomBase):
-    user_id: int
+    email: str
 
 class RoomUpdate(RoomBase):
     pass
