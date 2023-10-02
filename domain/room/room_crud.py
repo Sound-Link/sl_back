@@ -31,6 +31,3 @@ def delete_room(db: Session, room_id: int):
     db.commit()
     return db_room
 
-def get_rooms_by_user_id(db: Session, user_id: int, skip: int = 0, limit: int = 10):
-    return db.query(Room).filter(Room.create_user_id == user_id).offset(skip).limit(limit).all()
-

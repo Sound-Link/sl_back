@@ -27,9 +27,9 @@ def create_room_by_email(email: str, name: str, db: Session = Depends(get_db)):
 def delete_room(room_id: int, db: Session = Depends(get_db)):
     return room_crud.delete_room(db=db, room_id=room_id)
 
-@router.get("/rooms/user/{user_id}/", response_model=List[room_schema.RoomInDB])
-def read_rooms_by_user_id(user_id: int, skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    rooms = room_crud.get_rooms_by_user_id(db, user_id=user_id, skip=skip, limit=limit)
+@router.get("/rooms/user/{email}/", response_model=List[room_schema.RoomInDB])
+def read_rooms_by_email(email: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    rooms = room_crud.get_rooms_by_email(db, email=email, skip=skip, limit=limit)
     return rooms
 
 
