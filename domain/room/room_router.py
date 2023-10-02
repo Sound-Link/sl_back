@@ -15,21 +15,21 @@ import os
 router = APIRouter()
 
 @router.post("/rooms/create/")
-def create_room_by_email(email: str, name: str, db: Session = Depends(get_db)):
-    room = room_crud.create_room_by_user_and_email(db, email=email, name=name)
+def create_room_by_user(user_id: int, name: str, db: Session = Depends(get_db)):
+    room = room_crud.create_room_by_user_and_name(db, user_id=user_id, name=name)
     return room
 
-@router.put("/rooms/{room_id}", response_model=room_schema.RoomInDB)
-def update_room(room_id: int, room: room_schema.RoomUpdate, db: Session = Depends(get_db)):
-    return room_crud.update_room(db=db, room=room, room_id=room_id)
+# @router.put("/rooms/{room_id}", response_model=room_schema.RoomInDB)
+# def update_room(room_id: int, room: room_schema.RoomUpdate, db: Session = Depends(get_db)):
+#     return room_crud.update_room(db=db, room=room, room_id=room_id)
 
 @router.delete("/rooms/{room_id}", response_model=room_schema.RoomInDB)
 def delete_room(room_id: int, db: Session = Depends(get_db)):
     return room_crud.delete_room(db=db, room_id=room_id)
 
-@router.get("/rooms/user/{email}/", response_model=List[room_schema.RoomInDB])
-def read_rooms_by_email(email: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    rooms = room_crud.get_rooms_by_email(db, email=email, skip=skip, limit=limit)
+@router.get("/rooms/user/{user_id}/", response_model=List[room_schema.RoomInDB])
+def read_rooms_by_user_id(user_id: int, skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    rooms = room_crud.get_rooms_by_user_id(db, user_id=user_id, skip=skip, limit=limit)
     return rooms
 
 
