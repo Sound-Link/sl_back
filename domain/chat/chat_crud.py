@@ -6,7 +6,14 @@ def get_chat(db: Session, chat_id: int):
     return db.query(Chat).filter(Chat.id == chat_id).first()
 
 def get_chats_by_room(db: Session, room_id: int, skip: int = 0, limit: int = 100):
-    return db.query(Chat).filter(Chat.room_id == room_id).offset(skip).limit(limit).all()
+    return (
+        db.query(Chat)
+        .filter(Chat.room_id == room_id)
+        .order_by(Chat.created_at)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 def create_chat(db: Session, room_id: int, text: str):
     chat = Chat(room_id=room_id, text=text)

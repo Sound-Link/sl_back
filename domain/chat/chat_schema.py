@@ -3,7 +3,6 @@ from datetime import datetime
 
 class ChatBase(BaseModel):
     text: str
-    user_type: str
     room_id: int
 
 class ChatCreate(ChatBase):

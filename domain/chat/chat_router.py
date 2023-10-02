@@ -20,10 +20,6 @@ def read_chats_by_room(room_id: int, skip: int = 0, limit: int = 10, db: Session
     chats = chat_crud.get_chats_by_room(db, room_id=room_id, skip=skip, limit=limit)
     return chats
 
-@router.post("/chats/", response_model=chat_schema.ChatInDB)
-def create_chat(chat: chat_schema.ChatCreate, db: Session = Depends(get_db)):
-    return chat_crud.create_chat(db=db, chat=chat)
-
 @router.put("/chats/{chat_id}", response_model=chat_schema.ChatInDB)
 def update_chat(chat_id: int, chat: chat_schema.ChatUpdate, db: Session = Depends(get_db)):
     return chat_crud.update_chat(db=db, chat=chat, chat_id=chat_id)
@@ -52,7 +48,7 @@ async def upload_audio(room_id: int, file: UploadFile = None, db: Session = Depe
         text = recognize_audio(audio_bytes)
 
         # 텍스트를 Chat 모델에 저장합니다.
-        chat = create_chat(db, room_id, text)
+        chat = chat_crud.create_chat(db, room_id, text)
 
         return {"status": "success", "text": text}
 

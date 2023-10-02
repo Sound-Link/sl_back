@@ -27,7 +27,6 @@ class Chat(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, default=func.now())
     text = Column(String)
-    user_type = Column(String)  # Assuming user_type is a String field
     room_id = Column(Integer, ForeignKey('room.id'))
 
     room = relationship("Room", back_populates="chats")
