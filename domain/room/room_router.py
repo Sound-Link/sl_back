@@ -23,7 +23,7 @@ def create_room_by_user(user_id: int, name: str, db: Session = Depends(get_db)):
 # def update_room(room_id: int, room: room_schema.RoomUpdate, db: Session = Depends(get_db)):
 #     return room_crud.update_room(db=db, room=room, room_id=room_id)
 
-@router.delete("/rooms/{room_id}", response_model=room_schema.RoomInDB)
+@router.delete("/rooms/delete/{room_id}", response_model=room_schema.RoomInDB)
 def delete_room(room_id: int, db: Session = Depends(get_db)):
     return room_crud.delete_room(db=db, room_id=room_id)
 
