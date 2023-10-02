@@ -50,7 +50,7 @@ async def upload_audio(room_id: int, file: UploadFile = None, db: Session = Depe
         # 텍스트를 Chat 모델에 저장합니다.
         chat = chat_crud.create_chat(db, room_id, text)
 
-        return {"status": "success", "text": text}
+        return {"status": "success", "chat": chat}
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"{type(e).__name__}: {str(e)}")

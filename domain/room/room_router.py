@@ -25,6 +25,11 @@ def create_room_by_email(room: room_schema.RoomCreate, db: Session = Depends(get
 
 @router.delete("/rooms/delete/{room_id}", response_model=room_schema.RoomInDB)
 def delete_room(room_id: int, db: Session = Depends(get_db)):
+    # 룸 존재 여부 확인
+    room = room_crud.get_room(db, room_id)
+    if not room:
+        raise HTTPException(status_code=400, detail="The room has already been deleted.")
+    
     return room_crud.delete_room(db=db, room_id=room_id)
 
 @router.get("/rooms/user/{email}/", response_model=List[room_schema.RoomInDB])
