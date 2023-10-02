@@ -39,8 +39,8 @@ def recognize_audio(audio_bytes: bytes) -> str:
         text = recognizer.recognize_google(audio_data, language='ko-KR')
     return text
 
-@router.post("/upload/")
-async def upload_audio(file: UploadFile = None):
+@router.post("/upload/{room_id}/")
+async def upload_audio(room_id: int, file: UploadFile = None, db: Session = Depends(get_db)):
     if not file:
         raise HTTPException(status_code=400, detail="파일이 제공되지 않았습니다.")
 
@@ -50,6 +50,10 @@ async def upload_audio(file: UploadFile = None):
 
         # 오디오를 바로 인식합니다.
         text = recognize_audio(audio_bytes)
+
+        # 텍스트를 Chat 모델에 저장합니다.
+        chat = create_chat(db, room_id, text)
+
         return {"status": "success", "text": text}
 
     except Exception as e:

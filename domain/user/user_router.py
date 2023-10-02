@@ -18,3 +18,10 @@ def create_user(user: user_schema.UserCreate, db: Session = Depends(get_db)):
 def read_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     users = user_crud.get_users(db, skip=skip, limit=limit)
     return {"users": users}
+
+@router.delete("/users/{user_id}/")
+def remove_user(user_id: int, db: Session = Depends(get_db)):
+    db_user = user_crud.delete_user(db, user_id=user_id)
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"status": "success", "message": "User deleted successfully"}

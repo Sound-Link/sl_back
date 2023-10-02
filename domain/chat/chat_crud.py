@@ -8,12 +8,12 @@ def get_chat(db: Session, chat_id: int):
 def get_chats_by_room(db: Session, room_id: int, skip: int = 0, limit: int = 100):
     return db.query(Chat).filter(Chat.room_id == room_id).offset(skip).limit(limit).all()
 
-def create_chat(db: Session, chat: ChatCreate):
-    db_chat = Chat(**chat.dict())
-    db.add(db_chat)
+def create_chat(db: Session, room_id: int, text: str):
+    chat = Chat(room_id=room_id, text=text)
+    db.add(chat)
     db.commit()
-    db.refresh(db_chat)
-    return db_chat
+    db.refresh(chat)
+    return chat
 
 def update_chat(db: Session, chat: ChatUpdate, chat_id: int):
     db_chat = db.query(Chat).filter(Chat.id == chat_id).first()
