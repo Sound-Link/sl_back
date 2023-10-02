@@ -16,7 +16,7 @@ class Room(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     created_at = Column(DateTime, default=func.now())
-    create_user_id = Column(Integer, ForeignKey('user.id'))
+    create_user_email = Column(String, ForeignKey('user.email'))
     
     creator = relationship("User", back_populates="rooms")
     chats = relationship("Chat", back_populates="room")

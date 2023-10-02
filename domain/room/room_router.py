@@ -14,21 +14,10 @@ import os
 
 router = APIRouter()
 
-@router.get("/rooms/{room_id}", response_model=room_schema.RoomInDB)
-def read_room(room_id: int, db: Session = Depends(get_db)):
-    db_room = room_crud.get_room(db, room_id=room_id)
-    if db_room is None:
-        raise HTTPException(status_code=404, detail="Room not found")
-    return db_room
-
-@router.get("/rooms/", response_model=List[room_schema.RoomInDB])
-def read_rooms(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    rooms = room_crud.get_rooms(db, skip=skip, limit=limit)
-    return rooms
-
-@router.post("/rooms/", response_model=room_schema.RoomInDB)
-def create_room(room: room_schema.RoomCreate, db: Session = Depends(get_db)):
-    return room_crud.create_room(db=db, room=room, user_id=room.user_id)
+@router.post("/rooms/create/")
+def create_room_by_email(email: str, name: str, db: Session = Depends(get_db)):
+    room = room_crud.create_room_by_user_and_email(db, email=email, name=name)
+    return room
 
 @router.put("/rooms/{room_id}", response_model=room_schema.RoomInDB)
 def update_room(room_id: int, room: room_schema.RoomUpdate, db: Session = Depends(get_db)):
@@ -38,32 +27,20 @@ def update_room(room_id: int, room: room_schema.RoomUpdate, db: Session = Depend
 def delete_room(room_id: int, db: Session = Depends(get_db)):
     return room_crud.delete_room(db=db, room_id=room_id)
 
+@router.get("/rooms/user/{email}/", response_model=List[room_schema.RoomInDB])
+def read_rooms_by_email(email: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    rooms = room_crud.get_rooms_by_email(db, email=email, skip=skip, limit=limit)
+    return rooms
+
+
+
+
+
+
 r = Recognizer()
 
 # Dictionary to manage audio data for each room
 rooms_audio_data: Dict[str, bytes] = {}
-
-@router.websocket("/ws/voice/")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-
-    while True:
-        audio_data = await websocket.receive_bytes()
-
-        # Convert the bytes data to an AudioData object
-        audio = AudioData(audio_data, sample_rate=16000, sample_width=2, channels=1)
-
-        # Recognize the audio data
-        try:
-            text = r.recognize_google(audio, language='ko-KR')
-            print(f"Converted audio to text: {text}")
-
-            # Send the recognized text back to the client
-            await websocket.send_text(text)
-
-        except Exception as e:
-            print(f"Error recognizing audio: {e}")
-            await websocket.send_text("Error recognizing audio.")
 
 # Define the path to save the text file
 file_path = "received_text.txt"

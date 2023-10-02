@@ -13,7 +13,6 @@ class RoomUpdate(RoomBase):
 class RoomInDB(RoomBase):
     id: int
     created_at: datetime
-    create_user_id: int
 
     class Config:
         orm_mode = True
